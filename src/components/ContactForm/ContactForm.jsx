@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { addContact } from '../Redux/actions';
+import { addContact } from '../../Redux/actions';
 import css from './ContactForm.module.css';
+import { nanoid } from 'nanoid';
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,7 @@ export const ContactForm = () => {
     const name = event.target.name.value;
     const number = event.target.number.value;
 
-    dispatch(addContact({ name, number }));
+    dispatch(addContact({ id: nanoid(), name, number }));
     event.target.reset();
   };
 

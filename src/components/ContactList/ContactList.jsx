@@ -1,50 +1,35 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from '../Redux/actions';
-import { selectContacts } from '../Redux/selectors';
-import css from './ContactList.module.css';
-import { nanoid } from '@reduxjs/toolkit';
-import { Filter } from '../Filter/Filter';
 
-export const ContactList = ({ id }) => {
-  const dispatch = useDispatch();
+import { selectContacts, selectFilter } from '../../Redux/selectors';
+import css from './ContactList.module.css';
+import ContactListElement from 'components/ContactListElement/ContactListElement';
+
+const filterContacts = (contacts, filter) => {
+  return contacts.filter(contact =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
+};
+
+export const ContactList = () => {
+  // const dispatch = useDispatch();
   const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectFilter);
+  const filteredContacts = filterContacts(contacts, filter);
 
   return (
     <div className={css.contacts}>
       <h2>Contacts</h2>
-      <Filter />
       <ul className={css.contacts__list}>
-        {contacts &&
-          contacts.map(contact => (
-            <li className={css.contacts__item} key={nanoid()}>
-              <p className={css.contacts__name}>{contact.name}</p>
-              <p className={css.contacts__number}> {contact.number}</p>
-              <button
-                onClick={() => {
-                  dispatch(deleteContact(id));
-                }}
-                className={css.contacts__btn}
-              >
-                Delete
-              </button>
+        {filteredContacts &&
+          filteredContacts.map(contact => (
+            <li key={contact.id}>
+              <ContactListElement contact={contact} />
             </li>
           ))}
       </ul>
     </div>
   );
-};
-
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-      number: PropTypes.number,
-    })
-  ),
-  deleteContact: PropTypes.func,
 };
 
 export default ContactList;
