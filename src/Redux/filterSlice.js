@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { statusFilters } from "./const"
 
 const filterInitialState = {
-  value: '',
+  status: statusFilters
 };
 
 const filterSlice = createSlice({
@@ -9,7 +10,7 @@ const filterSlice = createSlice({
   initialState: filterInitialState,
   reducers: {
     setFilter(state, action) {
-      return (state.value = action.payload);
+      state.status = action.payload;
     },
   },
 });
