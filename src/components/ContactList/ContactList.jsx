@@ -1,33 +1,50 @@
 import React from 'react';
-import { useSelector  } from 'react-redux';
-import css from './ContactList.module.css';
 import ContactListElement from 'components/ContactListElement/ContactListElement';
-import {selectContacts, selectFilter} from "Redux/selectors"
+import propTypes from 'prop-types';
+import css from './ContactList.module.css';
+import { getContacts, getContactsFilter } from 'Redux/selectors';
+import { useSelector } from 'react-redux';
 
-
-const filterContacts = (contacts, statusFilter) => {
-  const normalizedFilter = statusFilter.toLowerCase();
-  return contacts.filter(contact =>
-    contact.name.toLowerCase().includes(normalizedFilter)
+const getFilteredContacts = (filterQuery, contacts) => {
+  return contacts.filter(
+    contact =>
+      filterQuery === '' ||
+      contact.name.toLowerCase().includes(filterQuery.toLowerCase())
   );
 };
 
-export const ContactList = () => {
-  
-  const contacts = useSelector(selectContacts);
-  const statusFilter = useSelector(selectFilter);
-  const filteredContacts = filterContacts(contacts, statusFilter);
+const ContactList = () => {
+  const contacts = useSelector(getContacts);
+  const filterQuery = useSelector(getContactsFilter);
+  const filteredContacts = getFilteredContacts(filterQuery, contacts);
 
   return (
-    <div className={css.contacts}>
-      <h2>Contacts</h2>
-      <ul className={css.contacts__list}>
-        { filteredContacts.map(contact => (
-              <ContactListElement key={contact.id} contact={contact} />
-          ))}
-      </ul>
-    </div>
+    <ul className={css.contactList}>
+      {filteredContacts.length ? (
+        filteredContacts.map(contact => (
+          <ContactListElement
+            key={contact.id}
+            id={contact.id}
+            name={contact.name}
+            number={contact.number}
+          />
+        ))
+      ) : (
+        <p>Your phonebook is empty. Add your contacts</p>
+      )}
+    </ul>
   );
+};
+
+ContactList.propTypes = {
+  list: propTypes.arrayOf(
+    propTypes.shape({
+      key: propTypes.string,
+      name: propTypes.string,
+      number: propTypes.string,
+      deleteContact: propTypes.func,
+    })
+  ),
 };
 
 export default ContactList;

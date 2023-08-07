@@ -1,28 +1,30 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setFilter } from '../../Redux/actions';
 import css from './Filter.module.css';
-import { nanoid } from '@reduxjs/toolkit';
-import { selectFilter } from 'Redux/selectors';
+import { useSelector, useDispatch } from 'react-redux';
+import { setContactsFilter } from 'Redux/filterSlice';
+import { getContactsFilter } from 'Redux/selectors';
 
-export const Filter = () => {
+const Filter = () => {
   const dispatch = useDispatch();
-  const filterId = nanoid();
-  const filter = useSelector(selectFilter);
+  const filter = useSelector(getContactsFilter);
 
-  const handleInputChange = e => {
-    dispatch(setFilter(e.target.value));
+  const filterChangeHandler = event => {
+    dispatch(setContactsFilter(event.target.value));
   };
 
   return (
     <div className={css.filter}>
+      <h3 className={css.filter__title}>Find contacts </h3>
       <input
-        type="text"
-        value={filter}
         className={css.filter__input}
-        id={filterId}
-        onChange={handleInputChange}
-        placeholder="Enter name"
+        id="filter"
+        value={filter}
+        onChange={filterChangeHandler}
+        type="text"
+        name="filter"
+        pattern="^[a-zA-ZĄąĆćĘęŁłŃńÓóŚśŹźŻż]+(([' \-][a-zA-ZĄąĆćĘęŁłŃńÓóŚśŹźŻż])?[a-zA-ZĄąĆćĘęŁłŃńÓóŚśŹźŻż]*)*$"
+        title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+        required
       />
     </div>
   );
